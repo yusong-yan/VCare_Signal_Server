@@ -12,34 +12,9 @@ var RenderStreaming = /** @class */ (function () {
         var _this = this;
         this.options = options;
         this.app = server_1.createServer(this.options);
-        if (this.options.secure) {
-            this.server = https.createServer({
-                key: fs.readFileSync(options.keyfile),
-                cert: fs.readFileSync(options.certfile),
-            }, this.app).listen(this.options.port, function () {
-                var port = _this.server.address().port;
-                var addresses = _this.getIPAddress();
-                for (var _i = 0, addresses_1 = addresses; _i < addresses_1.length; _i++) {
-                    var address = addresses_1[_i];
-                    console.log("https://" + address + ":" + port);
-                }
-            });
-        }
-        else {
-            this.server = this.app.listen(this.options.port, function () {
-                var port = _this.server.address().port;
-                var addresses = _this.getIPAddress();
-                for (var _i = 0, addresses_2 = addresses; _i < addresses_2.length; _i++) {
-                    var address = addresses_2[_i];
-                    console.log("http://" + address + ":" + port);
-                }
-            });
-        }
-        if (this.options.websocket) {
-            console.log("start websocket signaling server ws://" + this.getIPAddress()[0]);
-            //Start Websocket Signaling server
-            new websocket_1.default(this.server, this.options.mode);
-        }
+        this.server = this.app.listen(this.options.port);
+        console.log("start websocket signaling server ws://" + this.getIPAddress()[0]);
+        new websocket_1.default(this.server, this.options.mode);
         console.log("start as " + this.options.mode + " mode");
     }
     RenderStreaming.run = function (argv) {
@@ -49,21 +24,14 @@ var RenderStreaming = /** @class */ (function () {
                 program
                     .usage('[options] <apps...>')
                     .option('-p, --port <n>', 'Port to start the server on', process.env.PORT || "80")
-                    .option('-s, --secure', 'Enable HTTPS (you need server.key and server.cert)', process.env.SECURE || false)
-                    .option('-k, --keyfile <path>', 'https key file (default server.key)', process.env.KEYFILE || 'server.key')
-                    .option('-c, --certfile <path>', 'https cert file (default server.cert)', process.env.CERTFILE || 'server.cert')
-                    .option('-w, --websocket', 'Enable Websocket Signaling', process.env.WEBSOCKET || false)
                     .option('-m, --mode <type>', 'Choose Communication mode public or private (default public)', process.env.MODE || 'public')
                     .option('-l, --logging <type>', 'Choose http logging type combined, dev, short, tiny or none.(default dev)', process.env.LOGGING || 'dev')
                     .parse(argv);
                 var option = program.opts();
                 return {
                     port: option.port,
-                    secure: option.secure == undefined ? false : option.secure,
-                    keyfile: option.keyfile,
-                    certfile: option.certfile,
-                    websocket: option.websocket == undefined ? false : option.websocket,
-                    mode: option.mode,
+                    websocket: true,
+                    mode: 'private',
                     logging: option.logging,
                 };
             }
