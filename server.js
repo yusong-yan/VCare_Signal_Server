@@ -16,10 +16,9 @@ exports.createServer = function (config) {
     if (config.logging != "none") {
         app.use(morgan(config.logging));
     }
-    // const signal = require('./signaling');
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
-    app.get('/config', function (req, res) { return res.json({ useWebSocket: config.websocket, startupMode: config.mode, logging: config.logging }); });
+    app.get('/config', function (req, res) { return res.json({ useWebSocket: true, startupMode: config.mode, logging: config.logging }); });
     app.use('/signaling', signaling_1.default);
     return app;
 };
