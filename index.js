@@ -5,9 +5,38 @@ var commander_1 = require("commander");
 var https = require("https");
 var fs = require("fs");
 var os = require("os");
+const { initializeApp } = require('firebase/app');
+const { ref, getDatabase, set} = require('firebase/database');
 var server_1 = require("./server");
 var websocket_1 = require("./websocket");
 var RenderStreaming = /** @class */ (function () {
+
+    RenderStreaming.writeUserData = function () {
+        var interfaces = os.networkInterfaces();
+        var addresses = [];
+        for (var k in interfaces) {
+            for (var k2 in interfaces[k]) {
+                var address = interfaces[k][k2];
+                if (address.family === 'IPv4') {
+                    if (address.address != '127.0.0.1') {
+                        addresses.push(address.address);
+                    }
+                }
+            }
+        }
+        const app = initializeApp({
+                apiKey: "AIzaSyAkN1ZP5w5DyNZ7FrVbmpNBP9gF7m9zBCQ",
+                authDomain: "well-health-capstone.firebaseapp.com",
+                projectId: "well-health-capstone",
+                storageBucket: "well-health-capstone.appspot.com",
+                messagingSenderId: "806268228085",
+                appId: "1:806268228085:web:01b265f54b5ea3a29850bc",
+                measurementId: "G-SWY178BJNW",
+        });
+        const database = getDatabase();
+        set(ref(database, 'messages/-999/Metadata/WebSocket'), addresses[0]);
+    }
+
     function RenderStreaming(options) {
         var _this = this;
         this.options = options;
@@ -37,6 +66,7 @@ var RenderStreaming = /** @class */ (function () {
             }
         };
         var options = readOptions();
+        this.writeUserData();
         return new RenderStreaming(options);
     };
     RenderStreaming.prototype.getIPAddress = function () {
