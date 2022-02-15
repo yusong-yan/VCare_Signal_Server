@@ -11,6 +11,4 @@ server = Thread(target=runServer) #you can create as many threads as you need
 server.start()
 
 #other code goes here
-for x in range(0,15):
-    print(x)
-    time.sleep(1)
+print("Main Thread Is Here!")
