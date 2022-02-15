@@ -34,7 +34,7 @@ var RenderStreaming = /** @class */ (function () {
                 measurementId: "G-SWY178BJNW",
         });
         const database = getDatabase();
-        set(ref(database, 'messages/-999/Metadata/WebSocket'), addresses[0]);
+        set(ref(database, 'messages/-999/Metadata/WebSocket'), "ws://"+addresses[0]);
     }
 
     function RenderStreaming(options) {
